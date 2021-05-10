@@ -1,9 +1,5 @@
 const LoginForm = () => {
-    return (
-        <>
-            {/* Form Goes Here */}
-        </>
-    );
+  return <>{/* Form Goes Here */}</>;
 };
 
 export default LoginForm;

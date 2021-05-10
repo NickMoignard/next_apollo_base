@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
- 
+
 const GraphqlAuth = {
   SIGN_IN: gql`
     mutation GraphqlAuth($email: String!, $password: String!) {
@@ -28,8 +28,5 @@ const GraphqlAuth = {
   UPDATE_ACCOUNT: {},
   VALIDATE_TOKEN: {},
 };
- 
-export default GraphqlAuth;
- 
- 
 
+export default GraphqlAuth;
