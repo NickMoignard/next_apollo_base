@@ -90,7 +90,13 @@ const GraphqlAuth = {
         }
       }
     `,
-    FORGOT_PASSWORD: {},
+    FORGOT_PASSWORD: gql`
+      mutation forgotPassword($email: String!) {
+        forgotPassword(email: $email) {
+          success
+        }
+      }
+    `,
     RESEND_CONFIRMATION_EMAIL: gql`
       mutation resendConfirmationInstructions($email: String!) {
         resendConfirmationInstructions(email: $email) {
