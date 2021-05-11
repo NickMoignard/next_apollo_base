@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { useRef } from "react";
-import GraphAuth from "../apollo/graphql/mutations/GraphAuth";
+import GraphAuth from "../../apollo/graphql/mutations/GraphAuth";
 
 const SignInForm = () => {
   const [login, { data, loading, error }] = useMutation(

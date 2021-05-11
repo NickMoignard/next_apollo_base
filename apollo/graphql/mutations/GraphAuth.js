@@ -13,10 +13,12 @@ const GraphqlAuth = {
       }
     `,
     UPDATE_USER_ROLE: gql`
-      updateUserRole($id: ID!, $role: String!)
+      mutation updateUserRole($id: ID!, $role: String!) {
+        updateUserRole(id: $id, role: $role)
+      }
     `,
     UPDATE_USER: gql`
-      updateUser($id: ID!, $attributes: UserInput!) {
+      mutation updateUser($id: ID!, $attributes: UserInput!) {
         updateUser(id: $id, attributes: $attributes) {
           id
           name
@@ -25,7 +27,7 @@ const GraphqlAuth = {
       }
     `,
     UPDATE_COMPANY: gql`
-      updateCompany(id: ID!, attributes: CompanyInput!) {
+      mutation updateCompany($id: ID!, $attributes: CompanyInput!) {
         updateCompany(id: $id, attributes: $attributes) {
           id
           name
