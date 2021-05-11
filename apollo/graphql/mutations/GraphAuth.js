@@ -1,12 +1,35 @@
 import { gql } from "@apollo/client";
 
 const GraphqlAuth = {
-  protected: {
+  superadmin: {},
+  admin: {
     INVITE_USER: gql`
       mutation inviteUser($attributes: UserInput!) {
         inviteUser(attributes: $attributes) {
           id
           name
+          email
+        }
+      }
+    `,
+    UPDATE_USER_ROLE: gql`
+      updateUserRole($id: ID!, $role: String!)
+    `,
+    UPDATE_USER: gql`
+      updateUser($id: ID!, $attributes: UserInput!) {
+        updateUser(id: $id, attributes: $attributes) {
+          id
+          name
+          email
+        }
+      }
+    `,
+    UPDATE_COMPANY: gql`
+      updateCompany(id: ID!, attributes: CompanyInput!) {
+        updateCompany(id: $id, attributes: $attributes) {
+          id
+          name
+          slug
         }
       }
     `,
@@ -44,9 +67,71 @@ const GraphqlAuth = {
         }
       }
     `,
-    RESET_PASSWORD: {},
-    UPDATE_ACCOUNT: {},
-    VALIDATE_TOKEN: {},
+  },
+  protected: {
+    RESET_PASSWORD: gql`
+      mutation resetPassword(
+        $resetPasswordToken: String!
+        $password: String!
+        $passwordConfirmation: String!
+      ) {
+        resetPassword(
+          resetPasswordToken: $resetPasswordToken
+          password: $password
+          passwordConfirmation: $passwordConfirmation
+        ) {
+          errors {
+            message
+            details
+            field
+          }
+          success
+        }
+      }
+    `,
+    UPDATE_ACCOUNT: gql`
+      mutation updateAccount(
+        $currentPassword: String!
+        $password: String!
+        $passwordConfirmation: String!
+      ) {
+        updateAccount(
+          currentPassword: $currentPassword
+          password: $password
+          passwordConfirmation: $passwordConfirmation
+        ) {
+          errors {
+            message
+            field
+            details
+          }
+          success
+          user {
+            id
+            name
+            email
+          }
+        }
+      }
+    `,
+    VALIDATE_TOKEN: gql`
+      mutation validateToken {
+        validateToken {
+          errors {
+            message
+            details
+            field
+          }
+          success
+          user {
+            id
+            email
+            name
+          }
+          valid
+        }
+      }
+    `,
   },
   public: {
     SIGN_IN: gql`
@@ -61,6 +146,7 @@ const GraphqlAuth = {
             firstName
             lastName
             id
+            email
           }
           success
         }
@@ -86,6 +172,7 @@ const GraphqlAuth = {
           user {
             id
             name
+            email
           }
         }
       }

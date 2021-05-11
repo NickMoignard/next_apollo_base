@@ -3,7 +3,9 @@ import { useRef } from "react";
 import GraphAuth from "../apollo/graphql/mutations/GraphAuth";
 
 const SignInForm = () => {
-  const [login, { data, loading, error }] = useMutation(GraphAuth.SIGN_IN);
+  const [login, { data, loading, error }] = useMutation(
+    GraphAuth.public.SIGN_IN
+  );
   const refs = {
     email: useRef(""),
     password: useRef(""),
