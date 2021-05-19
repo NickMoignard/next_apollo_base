@@ -29,6 +29,7 @@ const GraphqlAuth = {
     CREATE_COMPANY: gql`
       mutation ($attributes: CompanyInput!) {
         createCompany(attributes: $attributes) {
+          id
           name
           slug
         }
