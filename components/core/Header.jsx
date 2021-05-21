@@ -26,9 +26,9 @@ const Header = ({ links }) => {
         </div>
         <div className="right-nav w-2/7 flex flex-grow-0 flex-row-reverse items-center">
           <div className="auth hidden md:inline-block">
-            <button type="button" className="">
+            <Link href="/auth">
               Login
-            </button>
+            </Link>
             <button type="button">Book Now</button>
           </div>
           <div className="hamburger md:hidden">

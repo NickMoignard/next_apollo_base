@@ -12,4 +12,8 @@ const stringAndIndexToHash = (string, index) => {
   return hash * index;
 };
 
-export default stringAndIndexToHash;
+const createEnum = (obj) => {
+  return Object.freeze({ ...obj });
+};
+
+export { createEnum, stringAndIndexToHash };

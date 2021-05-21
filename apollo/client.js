@@ -12,29 +12,32 @@ const httpLink = new HttpLink({
 
 const authLink = new ApolloLink((operation, forward) => {
   // retrieve auth token from local storage
-  const token = localStorage.getItem("auth_token");
+  const token = localStorage.getItem("auth-token");
+  const authorizationHeader = token ? `Bearer ${token}` : null;
 
   operation.setContext((prevContext) => {
     return {
       ...prevContext,
+      headers: {
+        authorization: authorizationHeader,
+      },
     };
   });
 
   return forward(operation).map((response) => {
     const context = operation.getContext();
-    const authHeader = context.response.headers.get("Authorization");
-
+    const {
+      response: { headers },
+    } = context;
+    const authHeader = headers.get("Authorization");
+    console.log(headers.get("Authorization"));
     localStorage.setItem("auth-token", authHeader);
     return response;
   });
-  /*
-    return forward(operation).map((data)=>{return data;})
-  */
 });
 
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
-  // uri: "http://localhost:8000/graphql",
   cache: new InMemoryCache(),
 });
 

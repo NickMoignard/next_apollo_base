@@ -3,6 +3,6 @@ const withPlugins = require("next-compose-plugins");
 const optimizedImages = require("next-optimized-images");
 
 module.exports = withPlugins([
-  [withImages, {}],
+  [withImages, { inlineImageLimit: 10 }],
   [optimizedImages, { optimizeImagesInDev: true }],
 ]);

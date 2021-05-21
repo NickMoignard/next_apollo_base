@@ -27,7 +27,7 @@ a {
   h2 {
     @apply text-xl;
   }
-  p, a {
+  p, a, label, input, button {
     @apply font-mono;
   }
   button {
@@ -39,4 +39,19 @@ a {
   button {
     @apply border-2;
   }
+  .responsive-div {
+    @apply w-full md:w-9/12 lg:w-7/12 xl:w-6/12  2xl:w-4/12;
+  }
+  form label, form input {
+    @apply text-3xl p-4;
+  }
+  .fancy-input {
+    @apply grid grid-cols-1;
+  }
+  /* .fancy-input label {
+    @apply text-5xl;
+  }
+  .fancy-input input {
+    
+  } */
 }
