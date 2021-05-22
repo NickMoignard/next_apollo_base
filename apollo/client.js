@@ -30,7 +30,6 @@ const authLink = new ApolloLink((operation, forward) => {
       response: { headers },
     } = context;
     const authHeader = headers.get("Authorization");
-    console.log(headers.get("Authorization"));
     localStorage.setItem("auth-token", authHeader);
     return response;
   });

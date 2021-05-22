@@ -6,66 +6,48 @@ import Router from "next/router";
 import GraphAuth from "../../apollo/graphql/mutations/GraphAuth";
 import LoginInput from "./LoginInput";
 import SignupInput from "./SignupInput";
+import {
+  getRef,
+  isLastStep,
+  emptyFunc,
+  isFirstStep,
+  clearInput,
+} from "./helpers.js";
 
 const Auth = () => {
+  // GraphQL mutations
+  const [signup] = useMutation(GraphAuth.public.SIGN_UP);
+  const [login] = useMutation(GraphAuth.public.SIGN_IN);
+
+  // State
+  const [formState, setFormState] = useState({
+    email: "",
+    password: "",
+  });
+  const [authState, setAuthState] = useState({
+    login: true,
+    step: 0,
+    numSteps: 1,
+  });
+  const stateMachineLookup = {
+    login: {
+      0: "email",
+      1: "password",
+    },
+    signup: {
+      0: "name",
+      1: "email",
+      2: "password",
+      3: "confirmation",
+    },
+  };
+  // Form Element References
   const refs = {
     email: useRef(""),
     password: useRef(""),
     confirmation: useRef(""),
     name: useRef(""),
     submit: useRef(""),
-  };
-
-  const [formState, setFormState] = useState({
-    email: "",
-    password: "",
-  });
-
-  const [authState, setAuthState] = useState({
-    login: true,
-    step: 0,
-    numSteps: 1,
-  });
-
-  const [signup, { signUpData, signUpLoading, signUpError }] = useMutation(
-    GraphAuth.public.SIGN_UP
-  );
-
-  const [login, { loginData, loginLoading, loginError }] = useMutation(
-    GraphAuth.public.SIGN_IN
-  );
-
-  // helpers
-  const finishedInput = () => {
-    console.log(`finishedInput?: ${authState.step} >= ${authState.numSteps}`);
-    return authState.step >= authState.numSteps;
-  };
-
-  const getRef = () => {
-    if (authState.login) {
-      switch (authState.step) {
-        case 0:
-          return refs.email;
-        case 1:
-          return refs.password;
-        default:
-          break;
-      }
-    } else {
-      switch (authState.step) {
-        case 0:
-          return refs.name;
-        case 1:
-          return refs.email;
-        case 2:
-          return refs.password;
-        case 3:
-          return refs.confirmation;
-        default:
-          break;
-      }
-    }
-    return null;
   };
 
   const handleChange = (e) => {
@@ -87,16 +69,24 @@ const Auth = () => {
           ? formState.confirmation
           : refs.confirmation.current.value,
     });
-    console.log(`Sign Up Mutation`, signUpData, signUpError, signUpLoading);
-    console.log(`Sign in Mutation`, loginData, loginError, loginLoading);
   };
 
   const nextStep = (e) => {
     e.preventDefault();
-    console.log(authState);
     setAuthState({ ...authState, step: authState.step + 1 });
-    if (finishedInput()) {
+
+    // update submit button
+    if (isLastStep(authState.step, authState.numSteps)) {
       refs.submit.current.type = "submit";
+    }
+
+    clearInput(authState.login, authState.step, stateMachineLookup, refs);
+  };
+  const backStep = (e) => {
+    e.preventDefault();
+    setAuthState({ ...authState, step: authState.step - 1 });
+    if (!isLastStep(authState.step, authState.numSteps)) {
+      refs.submit.current.type = "button";
     }
   };
 
@@ -107,11 +97,11 @@ const Auth = () => {
         variables: {
           email: formState.email,
           password: formState.password,
-          confimPass: formState.confirmation,
-          name: formState.name,
+          passwordConfirmation: formState.confirmation,
+          // name: formState.name,
         },
       }).then(() => {
-        // Router.push("/");
+        Router.push("/");
       });
     };
 
@@ -123,40 +113,53 @@ const Auth = () => {
           password: formState.password,
         },
       }).then(() => {
-        // Router.push("/");
+        Router.push("/");
       });
     };
 
-    if (finishedInput()) {
+    if (isLastStep(authState.step, authState.numSteps)) {
       return authState.login ? loginSubmitHandler : signupSubmitHandler;
     }
     return nextStep;
   };
 
   return (
-    <div className="p-4 responsive-div mx-auto">
+    <div className="p-4 responsive-div mx-auto my-40">
       <form
         onChange={handleChange}
         onSubmit={onSubmit()}
-        className="grid-cols-1 grid"
+        className="grid-cols-1 grid border bg-gray-50 p-10"
       >
+        <button
+          className={isFirstStep(authState.step) ? `hidden` : ""}
+          type="button"
+          onClick={backStep}
+          ref={refs.back}
+        >
+          Back
+        </button>
         {authState.login ? (
-          <LoginInput step={authState.step} ref={getRef()} />
+          <LoginInput
+            step={authState.step}
+            ref={getRef(refs, authState.login, authState.step)}
+          />
         ) : (
-          <SignupInput step={authState.step} ref={getRef()} />
+          <SignupInput
+            step={authState.step}
+            ref={getRef(refs, authState.login, authState.step)}
+          />
         )}
+
         <button
           type="button"
           onClick={
-            finishedInput()
-              ? () => {
-                  console.log("submitting form");
-                }
+            isLastStep(authState.step, authState.numSteps)
+              ? emptyFunc
               : nextStep
           }
           ref={refs.submit}
         >
-          {finishedInput() ? "Submit" : "Next"}
+          {isLastStep(authState.step, authState.numSteps) ? "Submit" : "Next"}
         </button>
         <button
           type="button"

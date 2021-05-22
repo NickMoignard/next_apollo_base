@@ -13,7 +13,7 @@ const HomeFeatureSection = () => {
         <Image
           width={2000}
           height={2000}
-          src="/surfer.svg"
+          src="/monkey.svg"
           alt="placeholder image"
         />
       </div>
